@@ -1,0 +1,24 @@
+<Window
+    x:Class="EVETranslate.SettingsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Settings"
+    Width="420"
+    Height="200"
+    WindowStartupLocation="CenterOwner">
+
+    <StackPanel Margin="16" VerticalAlignment="Top">
+        <CheckBox Content="Only translate new messages" IsChecked="{Binding Settings.OnlyTranslateNewMessages}" />
+
+        <TextBlock Margin="0,16,0,4" Text="Google Translate API key" />
+
+        <TextBox Text="{Binding Settings.GoogleTranslateApiKey}" ToolTip="Stored locally. Never sent unless translation is enabled." />
+
+        <Button
+            Width="90"
+            Margin="0,20,0,0"
+            HorizontalAlignment="Center"
+            Content="Close"
+            IsCancel="True" />
+    </StackPanel>
+</Window>

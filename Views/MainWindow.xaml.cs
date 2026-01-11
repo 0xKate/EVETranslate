@@ -4,14 +4,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace EVETranslate
+namespace EVETranslate.Views
 {
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
         }
 
         private void TabItem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -19,7 +18,6 @@ namespace EVETranslate
             if (sender is not TabItem tabItem)
                 return;
 
-            // DataContext of the TabItem is the item from Tabs
             if (tabItem.DataContext is AddTabPlaceholder)
             {
                 // Prevent the tab from being selected

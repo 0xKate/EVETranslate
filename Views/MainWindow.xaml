@@ -1,31 +1,37 @@
 ﻿<Window
-    x:Class="EVETranslate.MainWindow"
+    x:Class="EVETranslate.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:EVETranslate.Models"
     xmlns:viewmodels="clr-namespace:EVETranslate.ViewModels"
+    xmlns:views="clr-namespace:EVETranslate.Views"
     Title="EVETranslate"
     Width="980"
     Height="720"
     MinWidth="720"
     MinHeight="520"
+    d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
     Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-    WindowStartupLocation="CenterScreen">
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
 
     <DockPanel LastChildFill="True">
         <!--  Top command/menu bar  -->
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="Menu">
-                <MenuItem Header="Preferences..." />
+                <MenuItem Command="{Binding OpenSettingsCommand}" Header="Settings..." />
                 <Separator />
-                <MenuItem Header="Exit" />
+                <MenuItem Command="{Binding ExitAppCommand}" Header="Exit" />
             </MenuItem>
+
             <MenuItem Header="_Help">
                 <MenuItem Header="View Help" />
-                <MenuItem Header="About" />
+                <MenuItem Command="{Binding OpenAboutCommand}" Header="About" />
             </MenuItem>
         </Menu>
+
         <!--  Bottom translate/composer bar  -->
         <Border
             Padding="10"

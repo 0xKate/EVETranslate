@@ -20,13 +20,16 @@ namespace EVETranslate.ViewModels
         [ObservableProperty] private TargetLanguage selectedTargetLanguage = TargetLanguage.ZH;
 
         private readonly ChatLogSubscriptionManager _subs;
+        private readonly SettingsService _settings;
 
-        public MainViewModel()
+        public MainViewModel(SettingsService settings)
         {
+            _settings = settings;
             _subs = new ChatLogSubscriptionManager(new PollingLogTailer());
 
             Tabs.Add(new AddTabPlaceholder());
         }
+
 
         [RelayCommand]
         private void AddTab()
@@ -99,5 +102,32 @@ namespace EVETranslate.ViewModels
             if (!string.IsNullOrWhiteSpace(toCopy))
                 Clipboard.SetText(toCopy);
         }
+
+
+    [RelayCommand]
+    private void OpenSettings()
+    {
+        var win = new SettingsWindow
+        {
+            Owner = Application.Current.MainWindow,
+            DataContext = new SettingsViewModel(_settings) // if you use the settings service approach
+        };
+
+        win.ShowDialog();
     }
+
+    [RelayCommand]
+    private void ExitApp()
+    {
+        Application.Current.Shutdown();
+    }
+
+    [RelayCommand]
+    private void OpenAbout()
+    {
+        MessageBox.Show("EVETranslate\nv0.1", "About", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+
+}
 }
