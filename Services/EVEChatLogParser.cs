@@ -18,7 +18,6 @@ namespace EVETranslate.Services
 
         private static readonly string[] TimestampFormat = { "yyyy.MM.dd HH:mm:ss" };
 
-
         public static bool TryParseLogHeader(string fileText, out LogHeader header)
         {
             header = new LogHeader();

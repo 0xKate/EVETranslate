@@ -26,33 +26,28 @@ namespace EVETranslate.ViewModels
             _subs = new ChatLogSubscriptionManager(new PollingLogTailer());
 
             Tabs.Add(new AddTabPlaceholder());
-
-            // SelectedTab = local;
-        }
-
-        partial void OnSelectedTabChanged(object? value)
-        {
-            if (value is AddTabPlaceholder)
-                AddTabCommand.Execute(null);
         }
 
         [RelayCommand]
         private void AddTab()
         {
-            // 1) pick file first
-            var dlg = new Microsoft.Win32.OpenFileDialog
+            TryAddTabFromDialog();
+        }
+
+        private bool TryAddTabFromDialog()
+        {
+            var dlg = new OpenFileDialog
             {
                 Title = "Select an EVE chat log file",
                 Filter = "Chat logs (*.txt)|*.txt|All files (*.*)|*.*",
                 CheckFileExists = true
             };
 
-            if (dlg.ShowDialog() != true)
-                return;
+            if (dlg.ShowDialog() != true || string.IsNullOrWhiteSpace(dlg.FileName))
+                return false;
 
             var path = dlg.FileName;
 
-            // 2) read a small chunk and parse header for channel name
             string headerText;
             using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (var sr = new StreamReader(fs))
@@ -66,7 +61,6 @@ namespace EVETranslate.ViewModels
             if (EveChatLogParser.TryParseLogHeader(headerText, out var header))
                 tabName = header.ChannelName;
 
-            // 3) create tab with correct name + path
             var newTab = new ChannelTab
             {
                 Name = tabName,
@@ -76,10 +70,10 @@ namespace EVETranslate.ViewModels
             Tabs.Insert(Tabs.Count - 1, newTab);
             SelectedTab = newTab;
 
-            // 4) start tailing
             _subs.Start(newTab);
-        }
 
+            return true;
+        }
 
         [RelayCommand]
         private void CloseSelectedTab()
