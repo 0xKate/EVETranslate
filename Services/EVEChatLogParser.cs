@@ -32,7 +32,7 @@ namespace EVETranslate.Services
 
             // Only scan the first N lines so we don't chew huge logs
             var lines = fileText.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
-            int maxLines = Math.Min(lines.Length, 80);
+            int maxLines = Math.Min(lines.Length, 20);
 
             for (int i = 0; i < maxLines; i++)
             {

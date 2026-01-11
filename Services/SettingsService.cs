@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using EVETranslate.Models;
 
 namespace EVETranslate.Services
 {

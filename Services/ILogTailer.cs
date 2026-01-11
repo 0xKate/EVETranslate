@@ -2,6 +2,6 @@
 {
     public interface ILogTailer
     {
-        Task TailAsync(string path, Action<string> onLine, CancellationToken ct);
+        Task TailAsync(string path, Action<string> onLine, bool startAtEnd, CancellationToken ct);
     }
 }

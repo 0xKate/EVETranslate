@@ -1,11 +1,13 @@
 ﻿using EVETranslate.Models;
 using EVETranslate.Services;
+using System.Runtime;
 using System.Windows;
 
 namespace EVETranslate.Parsing
 {
     public sealed class ChatLogSubscriptionManager
     {
+
         private readonly ILogTailer _tailer;
 
         public ChatLogSubscriptionManager(ILogTailer tailer) => _tailer = tailer;
@@ -22,6 +24,8 @@ namespace EVETranslate.Parsing
 
             _ = Task.Run(async () =>
             {
+                bool startAtEnd = App.Settings.OnlyTranslateNewMessages;
+
                 await _tailer.TailAsync(tab.LogFilePath, line =>
                 {
                     var msg = EveChatLogParser.TryParseMessageLine(line, tab.Name);
@@ -31,7 +35,7 @@ namespace EVETranslate.Parsing
                     {
                         tab.Messages.Add(msg);
                     });
-                }, ct);
+                }, startAtEnd, ct);
             }, ct);
         }
 

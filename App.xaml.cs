@@ -7,7 +7,7 @@ namespace EVETranslate
 {
     public partial class App : Application
     {
-        public SettingsService Settings { get; } = new();
+        static public SettingsService Settings { get; } = new();
 
         protected override void OnStartup(StartupEventArgs e)
         {
