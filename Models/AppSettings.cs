@@ -1,8 +1,13 @@
-﻿namespace EVETranslate.Services
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace EVETranslate.Models
 {
-    public class AppSettings
+    public partial class AppSettings : ObservableObject
     {
-        public bool OnlyTranslateNewMessages { get; set; } = true;
-        public string GoogleTranslateApiKey { get; set; } = string.Empty;
+        [ObservableProperty]
+        private bool onlyTranslateNewMessages = true;
+
+        [ObservableProperty]
+        private string googleTranslateApiKey = string.Empty;
     }
 }

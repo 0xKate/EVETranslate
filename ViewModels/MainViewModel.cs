@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using EVETranslate.Views;
 using EVETranslate.Models;
 using EVETranslate.Parsing;          // EveChatLogParser
 using EVETranslate.Services;
@@ -20,11 +21,9 @@ namespace EVETranslate.ViewModels
         [ObservableProperty] private TargetLanguage selectedTargetLanguage = TargetLanguage.ZH;
 
         private readonly ChatLogSubscriptionManager _subs;
-        private readonly SettingsService _settings;
 
-        public MainViewModel(SettingsService settings)
+        public MainViewModel()
         {
-            _settings = settings;
             _subs = new ChatLogSubscriptionManager(new PollingLogTailer());
 
             Tabs.Add(new AddTabPlaceholder());
@@ -110,7 +109,6 @@ namespace EVETranslate.ViewModels
         var win = new SettingsWindow
         {
             Owner = Application.Current.MainWindow,
-            DataContext = new SettingsViewModel(_settings) // if you use the settings service approach
         };
 
         win.ShowDialog();

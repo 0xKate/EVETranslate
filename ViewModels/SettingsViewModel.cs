@@ -1,13 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using EVETranslate.Services;
+﻿using EVETranslate.Models;
 
 namespace EVETranslate.ViewModels
 {
-    public class SettingsViewModel : ObservableObject
+    public class SettingsViewModel
     {
-        public SettingsService Settings { get; }
+        public AppSettings Settings { get; }
 
-        public SettingsViewModel(SettingsService settings)
+        public SettingsViewModel(AppSettings settings)
         {
             Settings = settings;
         }
