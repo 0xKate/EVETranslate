@@ -82,38 +82,30 @@ namespace EVETranslate.Services
         {
             if (string.IsNullOrWhiteSpace(line)) return null;
 
-            // EVE logs sometimes include a UTF-8 BOM at the start of a line
             line = line.TrimStart('\uFEFF');
 
-            // Quick reject: header/separator lines and other non-message stuff
-            // (message lines always start with '[' after trimming)
             var trimmed = line.TrimStart();
             if (!trimmed.StartsWith("[")) return null;
 
             var m = MessageLineRx.Match(line);
             if (!m.Success) return null;
 
-            var tsRaw = m.Groups["ts"].Value;
-            if (!DateTime.TryParseExact(tsRaw, TimestampFormat, CultureInfo.InvariantCulture,
-                    DateTimeStyles.AssumeLocal, out var timestamp))
+            if (!DateTime.TryParseExact(
+                    m.Groups["ts"].Value,
+                    TimestampFormat,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.AssumeLocal,
+                    out var timestamp))
             {
                 return null;
             }
 
             var speaker = m.Groups["speaker"].Value.Trim();
-            var text = m.Groups["text"].Value.TrimEnd(); // keep internal spacing
+            var text = m.Groups["text"].Value.TrimEnd();
 
-            // Optional: ignore truly empty messages
             if (string.IsNullOrWhiteSpace(text)) return null;
 
-            LangGuess.Lang language = LangGuess.GuessLangByScript(text);
-
-            var translation = text; // TODO: DO translation here!
-            if (language == LangGuess.Lang.EnglishLike)
-            {
-                translation = text;
-                text = string.Empty;
-            }
+            var language = LangGuess.GuessLangByScript(text);
 
             return new ChatMessage
             {
@@ -121,10 +113,10 @@ namespace EVETranslate.Services
                 Channel = channelName,
                 Speaker = speaker.Length == 0 ? "Unknown" : speaker,
                 OriginalText = text,
-                TranslatedText = translation,
-                GuessedLanguage = language,
+                GuessedLanguage = language
             };
         }
+
     }
 
 }

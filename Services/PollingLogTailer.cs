@@ -1,11 +1,14 @@
 ﻿using System.IO;
-using System.Windows;
 
 namespace EVETranslate.Services
 {
-    public sealed class PollingLogTailer : ILogTailer
+    public sealed class PollingLogTailer : ILogTailerAsync
     {
-        public async Task TailAsync(string path, Action<string> onLine, bool startAtEnd, CancellationToken ct)
+        public async Task TailAsync(
+            string path,
+            Func<string, Task> onLine,
+            bool startAtEnd,
+            CancellationToken ct)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 
@@ -13,16 +16,20 @@ namespace EVETranslate.Services
             using var reader = new StreamReader(fs);
 
             if (startAtEnd)
+            {
                 fs.Seek(0, SeekOrigin.End);
+            }
             else
-                SkipEveHeader(reader);
+            {
+                await SkipEveHeaderAsync(reader, onLine, ct);
+            }
 
             while (!ct.IsCancellationRequested)
             {
                 string? line;
-                while ((line = await reader.ReadLineAsync()) != null)
+                while (!ct.IsCancellationRequested && (line = await reader.ReadLineAsync()) != null)
                 {
-                    onLine(line);
+                    await onLine(line);
                 }
 
                 // no new line yet
@@ -30,33 +37,29 @@ namespace EVETranslate.Services
             }
         }
 
-        private static void SkipEveHeader(StreamReader sr)
+        private static async Task SkipEveHeaderAsync(
+            StreamReader sr,
+            Func<string, Task> onLine,
+            CancellationToken ct)
         {
-            // EVE headers end right before the first line that starts with "[ "
-            // We'll read until we see that, then "rewind" one line logically by processing it.
-            // Simplest: read and discard until first message line; then pass it through.
-
-            while (true)
+            // EVE headers end right before the first message line that starts with "[ "
+            // We read and discard header lines. When we hit the first message line, we
+            // *emit it* so it isn't lost.
+            while (!ct.IsCancellationRequested)
             {
-                var peek = sr.Peek();
-                if (peek == -1) return; // file empty so far
+                if (sr.Peek() == -1)
+                    return; // file empty so far
 
-                // ReadLine to inspect content
-                var line = sr.ReadLine();
-                if (line is null) return;
+                var line = await sr.ReadLineAsync(ct);
+                if (line is null)
+                    return;
 
                 if (line.StartsWith("[ "))
                 {
-                    // We already consumed a message line—emit it by calling onLine here
-                    // BUT our Skip method doesn't have onLine, so:
-                    // easiest is: don't do Skip here; do it in caller logic, or implement skip differently.
-                    // For now, just stop skipping when we hit first message line; caller will miss 1 line.
-                    // Better approach below.
+                    await onLine(line); // don't lose the first message
                     return;
                 }
             }
         }
-
     }
-
 }
