@@ -9,7 +9,7 @@
     xmlns:views="clr-namespace:EVETranslate.Views"
     Title="Settings"
     Width="420"
-    Height="200"
+    Height="270"
     d:DataContext="{d:DesignInstance Type=models:AppSettings}"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
@@ -18,12 +18,25 @@
         <CheckBox Content="Only translate new messages" IsChecked="{Binding Settings.OnlyTranslateNewMessages}" />
 
         <TextBlock Margin="0,16,0,4" Text="Google Translate API key" />
-
         <PasswordBox
-            x:Name="ApiKeyBox"
-            PasswordChanged="ApiKeyBox_PasswordChanged"
+            x:Name="GoogleApiKeyBox"
+            PasswordChanged="GoogleApiKeyBox_PasswordChanged"
             PasswordChar="●"
-            ToolTip="Stored locally. Never sent unless translation is enabled." />
+            ToolTip="API Key for Google Translate " />
+
+        <TextBlock Margin="0,16,0,4" Text="DeepL API key" />
+        <PasswordBox
+            x:Name="DeeplApiKeyBox"
+            PasswordChanged="DeeplApiKeyBox_PasswordChanged"
+            PasswordChar="●"
+            ToolTip="API Key for DeepL Translate" />
+
+        <TextBlock Margin="0,16,0,4" Text="Yandex Translate API key" />
+        <PasswordBox
+            x:Name="YandexApiKeyBox"
+            PasswordChanged="YandexApiKeyBox_PasswordChanged"
+            PasswordChar="●"
+            ToolTip="API Key for Yandex Translate" />
 
         <Button
             Width="90"

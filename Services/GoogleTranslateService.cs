@@ -32,10 +32,6 @@ namespace EVETranslate.Services
             if (string.IsNullOrWhiteSpace(apiKey))
                 throw new InvalidOperationException("Google Translate API key is missing. Set it in Settings.");
 
-            // v2 endpoint (API key supported): https://translation.googleapis.com/language/translate/v2?key=...
-            // :contentReference[oaicite:2]{index=2}
-            var url = $"https://translation.googleapis.com/language/translate/v2?key={Uri.EscapeDataString(apiKey)}";
-
             var body = new TranslateRequest
             {
                 Q = text,
@@ -44,13 +40,22 @@ namespace EVETranslate.Services
                 Format = "text"
             };
 
-            using var resp = await _http.PostAsJsonAsync(url, body, cancellationToken);
+            var url = "https://translation.googleapis.com/language/translate/v2";
+            using var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Headers.Add("X-Goog-Api-Key", apiKey);
+            request.Content = JsonContent.Create(body);
+
+            using var resp = await _http.SendAsync(request, cancellationToken);
             resp.EnsureSuccessStatusCode();
 
             var data = await resp.Content.ReadFromJsonAsync<TranslateResponse>(cancellationToken: cancellationToken);
             var translated = data?.Data?.Translations is { Length: > 0 } t ? t[0].TranslatedText : null;
 
-            return translated ?? string.Empty;
+            if (translated is null)
+                throw new InvalidOperationException(
+                    "Google Translate returned a success response but no translation data.");
+
+            return translated;
         }
 
         private sealed class TranslateRequest
@@ -86,7 +91,6 @@ namespace EVETranslate.Services
             [JsonPropertyName("translatedText")]
             public string? TranslatedText { get; set; }
 
-            // Sometimes present if you omit source language:
             [JsonPropertyName("detectedSourceLanguage")]
             public string? DetectedSourceLanguage { get; set; }
         }

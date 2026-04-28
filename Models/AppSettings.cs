@@ -9,5 +9,11 @@ namespace EVETranslate.Models
 
         [ObservableProperty]
         private string googleTranslateApiKey = string.Empty;
+
+        [ObservableProperty]
+        private string deeplApiKey = string.Empty;
+
+        [ObservableProperty]
+        private string yandexApiKey = string.Empty;
     }
 }

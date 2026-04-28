@@ -14,16 +14,16 @@ namespace EVETranslate.Views
             DataContext = new SettingsViewModel(App.Settings);
 
             _isInitializing = true;
-            ApiKeyBox.Password = App.Settings.GoogleTranslateApiKey ?? string.Empty;
+            GoogleApiKeyBox.Password = App.Settings.GoogleTranslateApiKey ?? string.Empty;
             _isInitializing = false;
         }
 
-        private void ApiKeyBox_PasswordChanged(object sender, RoutedEventArgs e)
+        private void GoogleApiKeyBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             if (_isInitializing)
                 return;
 
-            App.Settings.GoogleTranslateApiKey = ApiKeyBox.Password;
+            App.Settings.GoogleTranslateApiKey = GoogleApiKeyBox.Password;
         }
     }
 }
